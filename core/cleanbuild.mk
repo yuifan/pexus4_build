@@ -78,6 +78,10 @@ else
     $(info Clean step: $(INTERNAL_CLEAN_STEP.$(step))) \
     $(shell $(INTERNAL_CLEAN_STEP.$(step))) \
    )
+  # If we are running mm/mmm, we should copy over the other clean steps too.
+  ifneq ($(ONE_SHOT_MAKEFILE),)
+    INTERNAL_CLEAN_STEPS := $(strip $(CURRENT_CLEAN_STEPS) $(steps))
+  endif
   steps :=
 endif
 CURRENT_CLEAN_BUILD_VERSION :=
@@ -117,13 +121,13 @@ else
   building_sdk :=
 endif
 
-# A change in the list of locales warrants an installclean, too.
-locale_list := $(subst $(space),$(comma),$(strip $(PRODUCT_LOCALES)))
+# A change in the list of aapt configs warrants an installclean, too.
+aapt_config_list := $(strip $(PRODUCT_AAPT_CONFIG) $(PRODUCT_AAPT_PREF_CONFIG))
 
 current_build_config := \
-    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(locale_list)}
+    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)$(building_sdk)-{$(aapt_config_list)}
 building_sdk :=
-locale_list :=
+aapt_config_list :=
 force_installclean := false
 
 # Read the current state from the file, if present.
@@ -186,7 +190,10 @@ installclean_files := \
 	$(PRODUCT_OUT)/root \
 	$(PRODUCT_OUT)/system \
 	$(PRODUCT_OUT)/dex_bootjars \
-	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES
+	$(PRODUCT_OUT)/obj/JAVA_LIBRARIES \
+	$(PRODUCT_OUT)/obj/FAKE \
+	$(PRODUCT_OUT)/obj/ETC/mac_permissions.xml_intermediates \
+	$(PRODUCT_OUT)/obj/ETC/sepolicy_intermediates
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.

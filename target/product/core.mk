@@ -22,65 +22,138 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.notification_sound=OnTheHunt.ogg \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
-PRODUCT_PACKAGES := \
+PRODUCT_PACKAGES += \
+    ApplicationsProvider \
+    BackupRestoreConfirmation \
+    BasicDreams \
+    Browser \
+    Contacts \
+    ContactsProvider \
+    DefaultContainerService \
+    DownloadProvider \
+    DownloadProviderUi \
+    HTMLViewer \
+    Home \
+    KeyChain \
+    MediaProvider \
+    PackageInstaller \
+    PicoTts \
+    SettingsProvider \
+    SharedStorageBackup \
+    TelephonyProvider \
+    UserDictionaryProvider \
+    VpnDialogs \
+    abcc \
+    apache-xml \
+    atrace \
     bouncycastle \
+    bu \
+    cacerts \
     com.android.location.provider \
     com.android.location.provider.xml \
+    conscrypt \
     core \
     core-junit \
-    create_test_dmtrace \
     dalvikvm \
     dexdeps \
     dexdump \
     dexlist \
     dexopt \
     dmtracedump \
-    dvz \
+    drmserver \
     dx \
     ext \
     framework-res \
     hprof-conv \
     icu.dat \
-    jasmin \
-    jasmin.jar \
+    installd \
+    ip \
+    ip-up-vpn \
+    ip6tables \
+    iptables \
+    keystore \
+    keystore.default \
+    libandroidfw \
+    libOpenMAXAL \
+    libOpenSLES \
+    libaudiopreprocessing \
+    libaudioutils \
+    libbcc \
     libcrypto \
-    libdex \
+    libdownmix \
     libdvm \
+    libdrmframework \
+    libdrmframework_jni \
     libexpat \
+    libfilterfw \
+    libfilterpack_imageproc \
+    libgabi++ \
     libicui18n \
     libicuuc \
     libjavacore \
+    libkeystore \
+    libmdnssd \
     libnativehelper \
     libnfc_ndef \
+    libportable \
+    libpowermanager \
+    libspeexresampler \
     libsqlite_jni \
     libssl \
+    libstagefright \
+    libstagefright_chromium_http \
+    libstagefright_soft_aacdec \
+    libstagefright_soft_aacenc \
+    libstagefright_soft_amrdec \
+    libstagefright_soft_amrnbenc \
+    libstagefright_soft_amrwbenc \
+    libstagefright_soft_flacenc \
+    libstagefright_soft_g711dec \
+    libstagefright_soft_h264dec \
+    libstagefright_soft_h264enc \
+    libstagefright_soft_mp3dec \
+    libstagefright_soft_mpeg4dec \
+    libstagefright_soft_mpeg4enc \
+    libstagefright_soft_vorbisdec \
+    libstagefright_soft_vpxdec \
+    libstagefright_soft_rawdec \
+    libvariablespeed \
+    libwebrtc_audio_preprocessing \
+    libwilhelm \
     libz \
-    sqlite-jdbc \
-    Browser \
-    Contacts \
-    Home \
-    HTMLViewer \
-    Phone \
-    ApplicationsProvider \
-    ContactsProvider \
-    DownloadProvider \
-    DownloadProviderUi \
-    MediaProvider \
-    PicoTts \
-    SettingsProvider \
-    TelephonyProvider \
-    TtsService \
-    VpnServices \
-    UserDictionaryProvider \
-    PackageInstaller \
-    DefaultContainerService \
-    Bugreport
+    make_ext4fs \
+    mdnsd \
+    okhttp \
+    requestsync \
+    screencap \
+    sensorservice \
+    telephony-common \
+    mms-common
+
+# SELinux packages
+PRODUCT_PACKAGES += \
+    sepolicy \
+    file_contexts \
+    seapp_contexts \
+    property_contexts \
+    mac_permissions.xml
 
 # host-only dependencies
 ifeq ($(WITH_HOST_DALVIK),true)
     PRODUCT_PACKAGES += \
+        apache-xml-hostdex \
         bouncycastle-hostdex \
+        conscrypt-hostdex \
         core-hostdex \
-        libjavacore-host
+        okhttp-hostdex \
+        libcrypto \
+        libexpat \
+        libicui18n \
+        libicuuc \
+        libjavacore \
+        libssl \
+        libz-host \
+        dalvik
 endif
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)

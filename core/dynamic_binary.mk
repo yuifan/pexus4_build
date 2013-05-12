@@ -75,7 +75,7 @@ ifeq ($(LOCAL_COMPRESS_MODULE_SYMBOLS),true)
 $(error Symbol compression not yet supported.)
 compress_output := $(intermediates)/COMPRESSED-$(LOCAL_BUILT_MODULE_STEM)
 
-#TODO: write the real $(SOSLIM) rule.
+#TODO: write the real $(STRIPPER) rule.
 #TODO: define a rule to build TARGET_SYMBOL_FILTER_FILE, and
 #      make it depend on ALL_ORIGINAL_DYNAMIC_BINARIES.
 $(compress_output): $(compress_input) $(TARGET_SYMBOL_FILTER_FILE) | $(ACP)
@@ -86,49 +86,20 @@ else
 compress_output := $(compress_input)
 endif
 
-
 ###########################################################
-## Pre-link
+## Store a copy with symbols for symbolic debugging
 ###########################################################
-prelink_input := $(compress_output)
-# The output of the prelink step is the binary we want to use
-# for symbolic debugging;  the prelink step may move sections
-# around, so we have to use this version.
-prelink_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_MODULE_SUBDIR)$(LOCAL_BUILT_MODULE_STEM)
-
-# Skip prelinker if it is FDO instrumentation build.
-ifneq ($(strip $(BUILD_FDO_INSTRUMENT)),)
-ifneq ($(LOCAL_NO_FDO_SUPPORT),true)
-LOCAL_PRELINK_MODULE := false
-endif
-endif
-
-ifeq ($(LOCAL_PRELINK_MODULE),true)
-$(prelink_output): $(prelink_input) $(TARGET_PRELINKER_MAP) $(APRIORI)
-	$(transform-to-prelinked)
-else
-# Don't prelink the binary, just copy it.  We can't skip this step
-# because people always expect a copy of the binary to appear
-# in the UNSTRIPPED directory.
-#
-# If the binary we're copying is acp or a prerequisite,
-# use cp(1) instead.
-ifneq ($(LOCAL_ACP_UNAVAILABLE),true)
-$(prelink_output): $(prelink_input) | $(ACP)
-	@echo "target Non-prelinked: $(PRIVATE_MODULE) ($@)"
+symbolic_input := $(compress_output)
+symbolic_output := $(LOCAL_UNSTRIPPED_PATH)/$(LOCAL_BUILT_MODULE_STEM)
+$(symbolic_output) : $(symbolic_input) | $(ACP)
+	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
-else
-$(prelink_output): $(prelink_input)
-	@echo "target Non-prelinked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target-with-cp)
-endif
-endif
 
 
 ###########################################################
 ## Strip
 ###########################################################
-strip_input := $(prelink_output)
+strip_input := $(symbolic_output)
 strip_output := $(LOCAL_BUILT_MODULE)
 
 ifeq ($(strip $(LOCAL_STRIP_MODULE)),)
@@ -137,7 +108,7 @@ endif
 
 ifeq ($(LOCAL_STRIP_MODULE),true)
 # Strip the binary
-$(strip_output): $(strip_input) | $(SOSLIM)
+$(strip_output): $(strip_input) | $(TARGET_STRIP)
 	$(transform-to-stripped)
 else
 # Don't strip the binary, just copy it.  We can't skip this step
@@ -157,8 +128,7 @@ endif
 endif # LOCAL_STRIP_MODULE
 
 
-$(cleantarget): PRIVATE_CLEAN_FILES := \
-			$(PRIVATE_CLEAN_FILES) \
-			$(linked_module) \
-			$(compress_output) \
-			$(prelink_output)
+$(cleantarget): PRIVATE_CLEAN_FILES += \
+    $(linked_module) \
+    $(symbolic_output) \
+    $(compress_output)

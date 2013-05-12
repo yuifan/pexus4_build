@@ -25,8 +25,12 @@ if [ -n "$TARGET_CPU_ABI2" ] ; then
   echo "ro.product.cpu.abi2=$TARGET_CPU_ABI2"
 fi
 echo "ro.product.manufacturer=$PRODUCT_MANUFACTURER"
-echo "ro.product.locale.language=$PRODUCT_DEFAULT_LANGUAGE"
-echo "ro.product.locale.region=$PRODUCT_DEFAULT_REGION"
+if [ -n "$PRODUCT_DEFAULT_LANGUAGE" ] ; then
+  echo "ro.product.locale.language=$PRODUCT_DEFAULT_LANGUAGE"
+fi
+if [ -n "$PRODUCT_DEFAULT_REGION" ] ; then
+  echo "ro.product.locale.region=$PRODUCT_DEFAULT_REGION"
+fi
 echo "ro.wifi.channels=$PRODUCT_DEFAULT_WIFI_CHANNELS"
 echo "ro.board.platform=$TARGET_BOARD_PLATFORM"
 
@@ -36,5 +40,6 @@ echo "ro.build.product=$TARGET_DEVICE"
 echo "# Do not try to parse ro.build.description or .fingerprint"
 echo "ro.build.description=$PRIVATE_BUILD_DESC"
 echo "ro.build.fingerprint=$BUILD_FINGERPRINT"
+echo "ro.build.characteristics=$TARGET_AAPT_CHARACTERISTICS"
 
 echo "# end build properties"

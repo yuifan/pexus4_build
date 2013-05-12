@@ -14,111 +14,99 @@
 # limitations under the License.
 #
 
+PRODUCT_POLICY := android.policy_phone
 PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
-	SystemUI \
-	AccountAndSyncSettings \
-	Camera \
 	Calculator \
 	DeskClock \
-	Development \
-	DrmProvider \
 	Email \
-	Fallback \
+	Exchange2 \
+	FusedLocation \
 	Gallery \
-	GPSEnable \
-	Launcher2 \
-	Protips \
 	Music \
 	Mms \
-	Settings \
-	SdkSetup \
-	CustomLocale \
-	gpstest \
-	sqlite3 \
-	LatinIME \
-	PinyinIME \
 	OpenWnn \
 	libWnnEngDic \
 	libWnnJpnDic \
 	libwnndict \
+	Phone \
+	PinyinIME \
+	Protips \
+	SoftKeyboard \
+	SystemUI \
+	Launcher2 \
+	Development \
+	DevelopmentSettings \
+	DrmProvider \
+	Fallback \
+	Settings \
+	SdkSetup \
+	CustomLocale \
+	sqlite3 \
+	InputDevices \
+	LatinIME \
 	CertInstaller \
 	LiveWallpapersPicker \
 	ApiDemos \
 	GestureBuilder \
-	SoftKeyboard \
 	CubeLiveWallpapers \
-	QuickSearchBox
+	QuickSearchBox \
+	WidgetPreview \
+	librs_jni \
+	ConnectivityTest \
+	GpsLocationTest \
+	CalendarProvider \
+	Calendar \
+	SmokeTest \
+	SmokeTestApp \
+	rild \
+	LegacyCamera
 
-# Host tools that are parts of the SDK.
-# See development/build/sdk.atree
-PRODUCT_PACKAGES += \
-	adb \
-	dmtracedump \
-	etc1tool \
-	hprof-conv \
-	mksdcard \
-	emulator \
-	ddms \
-	hierarchyviewer \
-	draw9patch \
-	layoutopt \
-	traceview \
-	android \
-	dexdump
+include $(SRC_TARGET_DIR)/product/emulator.mk
 
-# Native host Java libraries that are parts of the SDK.
-# See development/build/sdk.atree
+# Define the host tools and libs that are parts of the SDK.
+-include sdk/build/product_sdk.mk
+-include development/build/product_sdk.mk
+
+# audio libraries.
 PRODUCT_PACKAGES += \
-	androidprefs \
-	sdkstats \
-	archquery \
-	ddms \
-	ddmlib \
-	ddmuilib \
-	hierarchyviewer \
-	draw9patch \
-	layoutopt \
-	uix \
-	traceview \
-	anttasks \
-	sdklib \
-	sdkuilib \
-	sdkmanager \
-	swing-worker-1.1 \
-	groovy-all-1.7.0 \
-	commons-compress-1.0 \
-	emmalib \
-	org-netbeans-api-visual \
-	org-openide-util \
-	jcommon-1.0.12 \
-	jfreechart-1.0.9 \
-	jfreechart-1.0.9-swt \
-	org.eclipse.core.commands_3.4.0.I20080509-2000 \
-	org.eclipse.equinox.common_3.4.0.v20080421-2006 \
-	org.eclipse.jface_3.4.2.M20090107-0800 \
-	osgi \
-	layoutlib
+	audio.primary.goldfish \
+	audio_policy.default \
+	local_time.default
 
 PRODUCT_PACKAGE_OVERLAYS := development/sdk_overlay
 
 PRODUCT_COPY_FILES := \
+	device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
 	system/core/rootdir/etc/vold.fstab:system/etc/vold.fstab \
 	frameworks/base/data/sounds/effects/camera_click.ogg:system/media/audio/ui/camera_click.ogg \
 	frameworks/base/data/sounds/effects/VideoRecord.ogg:system/media/audio/ui/VideoRecord.ogg \
-	frameworks/base/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml
+	frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+	development/tools/emulator/system/camera/media_profiles.xml:system/etc/media_profiles.xml \
+	development/tools/emulator/system/camera/media_codecs.xml:system/etc/media_codecs.xml \
+	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
+	frameworks/native/data/etc/android.hardware.camera.autofocus.xml:system/etc/permissions/android.hardware.camera.autofocus.xml \
+	frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf \
+	hardware/libhardware_legacy/audio/audio_policy.conf:system/etc/audio_policy.conf
 
+$(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
+$(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
 
 # Overrides
 PRODUCT_BRAND := generic
 PRODUCT_NAME := sdk
 PRODUCT_DEVICE := generic
-PRODUCT_LOCALES := \
+
+# locale + densities. en_US is both first and in alphabetical order to
+# ensure this is the default locale.
+PRODUCT_LOCALES = \
+	en_US \
 	ldpi \
 	hdpi \
 	mdpi \
+	xhdpi \
 	ar_EG \
 	ar_IL \
 	bg_BG \
@@ -178,9 +166,9 @@ PRODUCT_LOCALES := \
 	zh_TW
 
 # include available languages for TTS in the system image
-include external/svox/pico/lang/PicoLangDeDeInSystem.mk
-include external/svox/pico/lang/PicoLangEnGBInSystem.mk
-include external/svox/pico/lang/PicoLangEnUsInSystem.mk
-include external/svox/pico/lang/PicoLangEsEsInSystem.mk
-include external/svox/pico/lang/PicoLangFrFrInSystem.mk
-include external/svox/pico/lang/PicoLangItItInSystem.mk
+-include external/svox/pico/lang/PicoLangDeDeInSystem.mk
+-include external/svox/pico/lang/PicoLangEnGBInSystem.mk
+-include external/svox/pico/lang/PicoLangEnUsInSystem.mk
+-include external/svox/pico/lang/PicoLangEsEsInSystem.mk
+-include external/svox/pico/lang/PicoLangFrFrInSystem.mk
+-include external/svox/pico/lang/PicoLangItItInSystem.mk
